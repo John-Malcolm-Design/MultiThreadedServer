@@ -7,8 +7,14 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Connector {
-	
+/*
+ * Name: Connector.java
+ * Author: John Malcolm Anderson
+ * Description: Spawns off thread for handling messages sent from server.
+ * Connection method sets up initial connection to sever via sockets.
+ */
+public class Connector extends Thread {
+
 	// Member Variables
 	private static Socket requestSocket;
 	private static ObjectOutputStream out; 
@@ -16,11 +22,8 @@ public class Connector {
 	private static String message="";
 	private static String ipaddress;
 	private static Scanner stdin;
-	
-	public Connector() {
-		super();
-	}
-	
+
+	// Getters & Setters
 	public static ObjectOutputStream getOut() {
 		return out;
 	}
@@ -37,32 +40,59 @@ public class Connector {
 		Connector.in = in;
 	}
 
-	// Run method for thread
-	void run()
-	{
+	// Initial server connection method
+	public void connect(){
 		// Keyboard object initialization
 		stdin = new Scanner(System.in);
 		try{
 			//1. Creating a socket to connect to the server
-			System.out.println("Please Enter your IP Address");
+			System.out.println("Please Enter the servers IP Address");
 			ipaddress = stdin.next();
-			
+
 			// Socket object initialization
 			requestSocket = new Socket(ipaddress, 2004);
 			System.out.println("Connected to "+ipaddress+" in port 2004");
-			
+
 			//2. Get Input and Output streams
 			out = new ObjectOutputStream(requestSocket.getOutputStream()); // Output Stream
-			
+
 			// Writes out any data in stream "flushes"
 			out.flush();
-			
+
 			in = new ObjectInputStream(requestSocket.getInputStream()); // Input Stream
-			System.out.println("Hello");
-		
 		}
 		catch(UnknownHostException unknownHost){
 			System.err.println("You are trying to connect to an unknown host!");
+		}
+		catch(IOException ioException){
+			ioException.printStackTrace();
+		}
+	}
+
+	// Thread method for listening and printing messages to the screen
+	public void run()
+	{
+		do{
+			try
+			{
+				System.out.println((String)in.readObject());
+			}
+			catch(ClassNotFoundException classnot){
+				System.err.println("Data received in unknown format");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}while(!message.equals("bye"));
+	}
+
+	// Send message function
+	void sendMessage(String msg)
+	{
+		try{
+			out.writeObject(msg);
+			out.flush();
+			System.out.println("client: " + msg);
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();

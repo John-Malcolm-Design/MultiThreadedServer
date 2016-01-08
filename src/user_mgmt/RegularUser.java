@@ -4,14 +4,27 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import server.FileParser;
+import server.ServerRunner;
+
+/*
+ * Name: RegularUser.java
+ * Author: John Malcolm Anderson
+ * Description: Implementation of User for user accounts on server.
+ * Also implements serializable for writing to object stream.
+ */
 public class RegularUser implements User, Serializable {
-
+	
+	// Member Variables
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private String password;
 	private int accessLevel;
+	private boolean loggedIn = false;
 
+	// Constructor
 	public RegularUser(String username, String password, int accessLevel) {
 		super();
 		this.username = username;
@@ -19,57 +32,82 @@ public class RegularUser implements User, Serializable {
 		this.accessLevel = accessLevel;
 	}
 
+	// Getters & Setters
 	@Override
-	public void getUsername() {
-		// TODO Auto-generated method stub
+	public String getUsername() {
+		return this.username;
+	}
+
+	@Override
+	public void setUsername(String username) {
+		this.username = username;
 
 	}
 
 	@Override
-	public void setUsername() {
-		// TODO Auto-generated method stub
+	public int getAccessLevel() {
+		return this.accessLevel;
+	}
+
+	@Override
+	public void setAccessLevel(int accessLevel) {
+		this.accessLevel = accessLevel;
 
 	}
 
 	@Override
-	public void getAccessLevel() {
-		// TODO Auto-generated method stub
+	public String getPassword() {
+		return this.password;
+	}
+
+	@Override
+	public void setPassword(String password) {
+		this.password = password;
 
 	}
 
 	@Override
-	public void setAccessLevel() {
-		// TODO Auto-generated method stub
-
+	public boolean isLoggedIn() {
+		return loggedIn;
 	}
+	
 
 	@Override
-	public void getPassword() {
-		// TODO Auto-generated method stub
-
+	public void setLoggedIn(boolean loggedIn) {
+		this.loggedIn = loggedIn;
 	}
-
+	
+	// To String ovveride
 	@Override
-	public void setPassword() {
-		// TODO Auto-generated method stub
-
+	public String toString() {
+		return "RegularUser [username=" + username + ", password=" + password + ", accessLevel=" + accessLevel + "]";
 	}
 
-	public void login(ObjectOutputStream out, ObjectInputStream in){
+	// Client side login method
+	@Override
+	public void login(ObjectOutputStream out, ObjectInputStream in) {
 		//3: Communicating with the server
 		try{
 			out.writeObject(this);
 			out.flush();
-			System.out.println("client: " + this.toString());
+			// System.out.println("client: " + this.toString());
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
-		}
+		}		
 	}
 
+	// Server side authentication method
 	@Override
-	public String toString() {
-		return "RegularUser [username=" + username + ", password=" + password + ", accessLevel=" + accessLevel + "]";
+	public void authenticate() {
+		int i = 0;
+		while (i < FileParser.users.size()) {
+			if (this.username.equals(FileParser.users.get(i).getUsername()) && this.password.equals(FileParser.users.get(i).getPassword())) {
+				this.loggedIn = true;
+				i = FileParser.users.size();
+			} 
+			i++;
+		}
 	}
 	
 }
