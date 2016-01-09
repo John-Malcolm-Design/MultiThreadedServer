@@ -21,6 +21,7 @@ public class RegularUser implements User, Serializable {
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private String password;
+	private String cwd;
 	private int accessLevel;
 	private boolean loggedIn = false;
 
@@ -28,6 +29,7 @@ public class RegularUser implements User, Serializable {
 	public RegularUser(String username, String password, int accessLevel) {
 		super();
 		this.username = username;
+		this.cwd = username;
 		this.password = password;
 		this.accessLevel = accessLevel;
 	}
@@ -77,6 +79,19 @@ public class RegularUser implements User, Serializable {
 		this.loggedIn = loggedIn;
 	}
 	
+	
+	@Override
+	public String getCwd() {
+		return cwd;
+	}
+	
+
+	@Override
+	public void setCwd(String cwd) {
+		this.cwd = cwd;
+	}
+	
+
 	// To String ovveride
 	@Override
 	public String toString() {

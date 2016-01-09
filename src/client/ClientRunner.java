@@ -2,6 +2,7 @@ package client;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import user_mgmt.RegularUser;
@@ -41,6 +42,38 @@ public class ClientRunner {
 		
 		// Starts thread listening for messages
 		server.start();
+		
+		String userChoice = console.nextLine();
+		
+		switch (userChoice) {
+		case "ls":
+			server.sendMessage("ls");
+			break;
+			
+		case "cd":
+			server.sendMessage("cd");
+			break;
+			
+		case "mkdir":
+			server.sendMessage("mkdir");
+			break;
+			
+		case "help":
+			server.sendMessage("help");
+			break;
+			
+		case "download":
+			server.sendMessage("download");
+			break;
+			
+		case "upload":
+			server.sendMessage("upload");
+			break;
+
+		default:
+			System.out.println("That is not a valid command - try again");
+			break;
+		}
 	}
 
 }

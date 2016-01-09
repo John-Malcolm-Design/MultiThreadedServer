@@ -32,5 +32,9 @@ public interface User {
 
 	public void login(ObjectOutputStream out, ObjectInputStream in);
 
+	public abstract void setCwd(String cwd);
+
+	public abstract String getCwd();
+
 	
 }

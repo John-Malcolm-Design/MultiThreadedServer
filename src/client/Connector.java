@@ -92,7 +92,7 @@ public class Connector extends Thread {
 		try{
 			out.writeObject(msg);
 			out.flush();
-			System.out.println("client: " + msg);
+			// System.out.println("client: " + msg); DEBUG
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
