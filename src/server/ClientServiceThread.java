@@ -53,13 +53,15 @@ public class ClientServiceThread extends Thread{
 			System.out.println("Accepted Client : ID - " + clientID + " : Address - "
 					+ clientSocket.getInetAddress().getHostName());
 
-			// sendMessage("Connection successful");
+			// Read in User and authenticate the given account
 			user = (User)in.readObject();
 			user.authenticate();
 
 			if (user.isLoggedIn() == false) {
+				// If user authentication unsuccessfull print out "Incorrect username or password"
 				sendMessage("Incorrect username or password");
 			} else {
+				// Print out menu and continue taking input if user authentication is successfull 
 				sendMessage("You are now logged in. Welcome " + user.getUsername() + ".");
 				sendMessage("Commands:");
 				sendMessage("ls = list all files and folders");
@@ -70,6 +72,8 @@ public class ClientServiceThread extends Thread{
 				sendMessage("help = lists commands");
 				sendMessage(user.getCwd() + ">");
 			}
+			
+			// Loop while message does not equal exit
 			do{
 				try
 				{
@@ -108,7 +112,7 @@ public class ClientServiceThread extends Thread{
 					System.err.println("Data received in unknown format");
 				}
 
-			}while(!message.equals("bye"));
+			}while(!message.equals("exit"));
 
 			System.out.println("Ending Client : ID - " + clientID + " : Address - "
 					+ clientSocket.getInetAddress().getHostName());
@@ -117,6 +121,7 @@ public class ClientServiceThread extends Thread{
 		}
 	}
 
+	// Upload function
 	private void upload() throws ClassNotFoundException, IOException {
 		String name = (String) in.readObject();
 		PrintWriter writer = new PrintWriter(root + user.getCwd() + "\\" + name, "UTF-8");
@@ -133,6 +138,7 @@ public class ClientServiceThread extends Thread{
 		sendMessage(user.getCwd() + ">");
 	}
 
+	// Download function
 	private void download() throws ClassNotFoundException, IOException {
 		String file = (String)in.readObject();
 		
@@ -166,6 +172,7 @@ public class ClientServiceThread extends Thread{
 
 	}
 
+	// Help function
 	private void help() {
 		sendMessage("Hey " + user.getUsername() + ".");
 		sendMessage("These are the available commands:");
@@ -178,6 +185,7 @@ public class ClientServiceThread extends Thread{
 		sendMessage(user.getCwd() + ">");
 	}
 
+	// Make directory function
 	private void mkdir() throws ClassNotFoundException, IOException {
 		String newDir = (String)in.readObject();
 		File nDir = new File(root + user.getCwd() + "\\" + newDir);
@@ -191,6 +199,7 @@ public class ClientServiceThread extends Thread{
 		}
 	}
 
+	// Change directory function
 	private void cd() throws ClassNotFoundException, IOException {
 		File f = new File("C:\\Users\\johnmalcolm\\Desktop\\root\\" + user.getCwd());
 		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
@@ -204,6 +213,7 @@ public class ClientServiceThread extends Thread{
 		}
 	}
 
+	// List files function
 	public void ls(){
 		File f = new File(root + user.getCwd());
 		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));

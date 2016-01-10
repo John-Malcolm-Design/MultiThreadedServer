@@ -49,17 +49,25 @@ public class ClientRunner {
 
 		// Starts thread listening for messages
 		server.start();
-
+		
+		// Waits to get user choice (e.g - ls, cd, mkdir, etc...)
 		String userChoice;
 
+		// Loops until user chooses exit 
 		do {
+			
+			// Get user input
 			userChoice = console.nextLine();
 
+			// Switch through user input
 			switch (userChoice) {
+			
+			// List Files
 			case "ls":
 				server.sendMessage("ls");
 				break;
 
+			// Change Directory 
 			case "cd":
 				server.sendMessage("cd");
 				System.out.println("Enter directory name:");
@@ -67,17 +75,20 @@ public class ClientRunner {
 				server.sendMessage(dir);
 				break;
 
+			// Make a new directory
 			case "mkdir":
 				server.sendMessage("mkdir");
 				System.out.println("Enter directory name:");
 				String newDir = console.nextLine();
 				server.sendMessage(newDir);
 				break;
-
+				
+			// Help
 			case "help":
 				server.sendMessage("help");
 				break;
 
+			// Download file
 			case "download":
 				server.sendMessage("download");
 				System.out.println("Please enter the name of the file you would like to download");
@@ -97,11 +108,12 @@ public class ClientRunner {
 				server.start();
 				break;
 
+			// Upload a file
 			case "upload":
 				server.sendMessage("upload");
 				System.out.println("Please enter full file URI");
 				String fileURI = console.nextLine();
-				String fileName = fileURI.substring(fileURI.lastIndexOf('/') + 1); // FOR MAC - change for windows
+				String fileName = fileURI.substring(fileURI.lastIndexOf('\\') + 1); // FOR WINDOWS - change for mac
 				server.sendMessage(fileName);
 				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileURI)));
 
@@ -110,10 +122,10 @@ public class ClientRunner {
 					server.sendMessage(line);
 
 				}
-
 				server.sendMessage("EOF999");
 				break;
 
+			// Exit server
 			case "exit":
 				server.sendMessage("exit");
 				break;
@@ -123,8 +135,6 @@ public class ClientRunner {
 				break;
 			}
 		} while (userChoice != "exit");
-
-
 	}
 
 }

@@ -59,7 +59,8 @@ public class Connector extends Thread {
 			// Writes out any data in stream "flushes"
 			out.flush();
 
-			in = new ObjectInputStream(requestSocket.getInputStream()); // Input Stream
+			// Input Stream
+			in = new ObjectInputStream(requestSocket.getInputStream()); 
 		}
 		catch(UnknownHostException unknownHost){
 			System.err.println("You are trying to connect to an unknown host!");
@@ -92,7 +93,6 @@ public class Connector extends Thread {
 		try{
 			out.writeObject(msg);
 			out.flush();
-			// System.out.println("client: " + msg); DEBUG
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
