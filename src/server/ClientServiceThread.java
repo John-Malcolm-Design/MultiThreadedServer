@@ -1,9 +1,16 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +35,7 @@ public class ClientServiceThread extends Thread{
 	private static ObjectOutputStream out;
 	private static ObjectInputStream in;
 	private static User user;
+	private static String root = "C:\\Users\\johnmalcolm\\Desktop\\root\\";
 
 	// Constructor takes socket and ID
 	ClientServiceThread(Socket s, int i) {
@@ -55,11 +63,12 @@ public class ClientServiceThread extends Thread{
 				sendMessage("You are now logged in. Welcome " + user.getUsername() + ".");
 				sendMessage("Commands:");
 				sendMessage("ls = list all files and folders");
-				sendMessage("mkdir [folder name] = make a new directory");
-				sendMessage("cd [folder name] = change directory");
-				sendMessage("download [filename] = download file");
-				sendMessage("upload [filepath + name] = upload file into folder");
+				sendMessage("mkdir = make a new directory");
+				sendMessage("cd = change directory");
+				sendMessage("download = download file");
+				sendMessage("upload = upload file into folder");
 				sendMessage("help = lists commands");
+				sendMessage(user.getCwd() + ">");
 			}
 			do{
 				try
@@ -70,23 +79,23 @@ public class ClientServiceThread extends Thread{
 					case "ls":
 						ls();
 						break;
-						
+
 					case "cd":
 						cd();
 						break;
-						
+
 					case "mkdir":
 						mkdir();
 						break;
-						
+
 					case "help":
 						help();
 						break;
-						
+
 					case "download":
 						download();
 						break;
-						
+
 					case "upload":
 						upload();
 						break;
@@ -108,31 +117,102 @@ public class ClientServiceThread extends Thread{
 		}
 	}
 
-	private void upload() {
-		// TODO Auto-generated method stub
-		
+	private void upload() throws ClassNotFoundException, IOException {
+		String name = (String) in.readObject();
+		PrintWriter writer = new PrintWriter(root + user.getCwd() + "\\" + name, "UTF-8");
+		String line = "init";
+		do {
+			line = (String) in.readObject();
+			if (line.equals("EOF999")) {
+				break;
+			}else{
+				writer.println(line);
+			}
+		} while (!line.equals("EOF999"));
+		writer.close();
+		sendMessage(user.getCwd() + ">");
 	}
 
-	private void download() {
-		// TODO Auto-generated method stub
+	private void download() throws ClassNotFoundException, IOException {
+		String file = (String)in.readObject();
 		
+		File f = new File(root + user.getCwd());
+		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
+		boolean flag = false;
+		sendMessage("bye");
+		for (String name: names) {
+			if (file.equals(name) ) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(root + user.getCwd() + "\\"+name)));
+				String line;
+				while ((line = br.readLine()) != null) {
+					sendMessage(line);
+					
+				}
+				
+				sendMessage("EOF999");
+				sendMessage(user.getCwd() + ">");
+				flag = true;
+				break;
+				
+			}else{
+				flag = false;
+			}
+			
+		}
+		if (flag == false) {
+			sendMessage("File not found - please try again");
+		}
+		sendMessage(user.getCwd() + ">");
+
 	}
 
 	private void help() {
-		// TODO Auto-generated method stub
-		
+		sendMessage("Hey " + user.getUsername() + ".");
+		sendMessage("These are the available commands:");
+		sendMessage("ls = list all files and folders");
+		sendMessage("mkdir = make a new directory");
+		sendMessage("cd = change directory");
+		sendMessage("download = download file");
+		sendMessage("upload = upload file into folder");
+		sendMessage("help = lists commands");
+		sendMessage(user.getCwd() + ">");
 	}
 
-	private void mkdir() {
-		// TODO Auto-generated method stub
-		
+	private void mkdir() throws ClassNotFoundException, IOException {
+		String newDir = (String)in.readObject();
+		File nDir = new File(root + user.getCwd() + "\\" + newDir);
+		boolean successful = nDir.mkdir();
+		if (successful){
+			sendMessage("directory was created successfully");
+			sendMessage(user.getCwd() + ">");
+		}else{
+			sendMessage("failed trying to create the directory");
+			sendMessage(user.getCwd() + ">");
+		}
 	}
 
-	private void cd() {
-		// TODO Auto-generated method stub
-		
+	private void cd() throws ClassNotFoundException, IOException {
+		File f = new File("C:\\Users\\johnmalcolm\\Desktop\\root\\" + user.getCwd());
+		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
+		String dir = (String)in.readObject();
+		if (names.contains(dir)) {
+			String newCWD = user.getCwd() + "\\" + dir;
+			user.setCwd(newCWD);
+			sendMessage(newCWD + ">");
+		}else{
+			sendMessage("That directory does not exist");
+		}
 	}
 
+	public void ls(){
+		File f = new File(root + user.getCwd());
+		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
+		for (String name: names) {
+			sendMessage(name);
+		}
+		sendMessage(user.getCwd() + ">");
+	}
+	
 	// Send message function
 	void sendMessage(String msg)
 	{
@@ -143,14 +223,5 @@ public class ClientServiceThread extends Thread{
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
-	}
-
-	public void ls(){
-		System.out.println(user.getUsername());
-		File f = new File("C:\\Users\\johnmalcolm\\Desktop\\root\\" + user.getUsername());
-		ArrayList<String> names = new ArrayList<String>(Arrays.asList(f.list()));
-		for (String name: names) {
-			sendMessage(name);
-		}
-	}
+	}	
 }
