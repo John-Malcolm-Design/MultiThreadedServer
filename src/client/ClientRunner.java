@@ -49,25 +49,25 @@ public class ClientRunner {
 
 		// Starts thread listening for messages
 		server.start();
-		
+
 		// Waits to get user choice (e.g - ls, cd, mkdir, etc...)
 		String userChoice;
 
 		// Loops until user chooses exit 
 		do {
-			
+
 			// Get user input
 			userChoice = console.nextLine();
 
 			// Switch through user input
 			switch (userChoice) {
-			
+
 			// List Files
 			case "ls":
 				server.sendMessage("ls");
 				break;
 
-			// Change Directory 
+				// Change Directory 
 			case "cd":
 				server.sendMessage("cd");
 				System.out.println("Enter directory name:");
@@ -75,20 +75,20 @@ public class ClientRunner {
 				server.sendMessage(dir);
 				break;
 
-			// Make a new directory
+				// Make a new directory
 			case "mkdir":
 				server.sendMessage("mkdir");
 				System.out.println("Enter directory name:");
 				String newDir = console.nextLine();
 				server.sendMessage(newDir);
 				break;
-				
-			// Help
+
+				// Help
 			case "help":
 				server.sendMessage("help");
 				break;
 
-			// Download file
+				// Download file
 			case "download":
 				server.sendMessage("download");
 				System.out.println("Please enter the name of the file you would like to download");
@@ -108,7 +108,7 @@ public class ClientRunner {
 				server.start();
 				break;
 
-			// Upload a file
+				// Upload a file
 			case "upload":
 				server.sendMessage("upload");
 				System.out.println("Please enter full file URI");
@@ -125,7 +125,7 @@ public class ClientRunner {
 				server.sendMessage("EOF999");
 				break;
 
-			// Exit server
+				// Exit server
 			case "exit":
 				server.sendMessage("exit");
 				break;

@@ -14,17 +14,17 @@ import user_mgmt.RegularUser;
  * Handles spawning thread for new requests on socket.
  */
 public class ServerRunner {
-	
+
 	public static void main(String[] args) throws IOException {
 		ServerSocket mainSocket = new ServerSocket(2004,10);
 		FileParser.initUsers();
-		
-	    int id = 0;
-	    while (true) {
-	      Socket clientSocket = mainSocket.accept();
-	      ClientServiceThread cliThread = new ClientServiceThread(clientSocket, id++);
-	      cliThread.start();
-	    }
-	    
+
+		int id = 0;
+		while (true) {
+			Socket clientSocket = mainSocket.accept();
+			ClientServiceThread cliThread = new ClientServiceThread(clientSocket, id++);
+			cliThread.start();
+		}
+
 	}
 }

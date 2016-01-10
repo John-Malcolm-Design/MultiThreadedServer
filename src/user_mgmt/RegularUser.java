@@ -16,7 +16,7 @@ import server.ServerRunner;
  * Also implements serializable for writing to object stream.
  */
 public class RegularUser implements User, Serializable {
-	
+
 	// Member Variables
 	private static final long serialVersionUID = 1L;
 	private String username;
@@ -72,25 +72,25 @@ public class RegularUser implements User, Serializable {
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
-	
+
 
 	@Override
 	public void setLoggedIn(boolean loggedIn) {
 		this.loggedIn = loggedIn;
 	}
-	
-	
+
+
 	@Override
 	public String getCwd() {
 		return cwd;
 	}
-	
+
 
 	@Override
 	public void setCwd(String cwd) {
 		this.cwd = cwd;
 	}
-	
+
 
 	// To String ovveride
 	@Override
@@ -124,5 +124,5 @@ public class RegularUser implements User, Serializable {
 			i++;
 		}
 	}
-	
+
 }
